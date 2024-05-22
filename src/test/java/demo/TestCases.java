@@ -1,7 +1,6 @@
 package demo;
 
 import java.time.Duration;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 
@@ -14,17 +13,19 @@ import org.openqa.selenium.logging.LogType;
 import org.openqa.selenium.logging.LoggingPreferences;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
+import org.testng.annotations.AfterSuite;
+import org.testng.annotations.BeforeSuite;
+import org.testng.annotations.Test;
 
 import io.github.bonigarcia.wdm.WebDriverManager;
-//import org.testng.annotations.*;
-//import org.testng.annotations.Test;
 
-public class TestCases {
+public class TestCases 
+{
     ChromeDriver driver;
 
     
-    
-    public TestCases()
+    @BeforeSuite
+    public void setUp()
     {
         System.out.println("Constructor: TestCases");
 
@@ -42,12 +43,12 @@ public class TestCases {
       
         System.setProperty(ChromeDriverService.CHROME_DRIVER_LOG_PROPERTY, "chromedriver.log");
 
-        driver = new ChromeDriver(options);
-        
+        driver = new ChromeDriver(options);        
 
     }
 
-    public void endTest()
+    @AfterSuite
+    public void tearDown()
     {
         System.out.println("End Test: TestCases");
         driver.close();
@@ -55,39 +56,32 @@ public class TestCases {
 
     }
 
-    
+    @Test(priority=1)
     public void testCase01()
     {
-        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(30));
-        try 
-        {
-            //Navigate to Flipkart URL
-            navigateTo(driver, "http://www.flipkart.com");
+        
+        navigateTo(driver, "http://www.flipkart.com");
 
-            //search washing machine
-            searchBar(driver, By.xpath("//input[@title='Search for Products, Brands and More']"),"Washing Machine",By.xpath("//button[@type='submit']"));
-            
-            //click on Popularity and count Rating less than or equal to 4.0
-            sortAndCount(driver, By.xpath("//div[text()='Popularity']"), By.xpath("//div[@class='XQDdHH']"));
+        searchBar(driver, By.xpath("//input[@title='Search for Products, Brands and More']"),"Washing Machine",By.xpath("//button[@type='submit']"));
 
-            //search Iphone 
-            searchBar(driver, By.xpath("//input[@class='zDPmFV']"),"iPhone",By.xpath("//button[@type='submit']"));
-
-            //title and discount
-            titleandDiscount(driver,By.xpath("//div[@class='UkUFwK']"),By.xpath("//div[@class='KzDlHZ']"));
-
-            //search coffee mug
-            searchBar(driver, By.xpath("//input[@class='zDPmFV']"),"Coffee mug",By.xpath("//button[@type='submit']"));
-            
-            //Coffee Mug
-            coffeeMug(driver, By.xpath("(//div[@class='XqNaEv'])[1]"));
-           
-        } catch (Exception e) {
-            // TODO: handle exception
-            System.out.println("Failure occured while automating Flipkart Application");
-        }    
+        sortAndCount(driver, By.xpath("//div[text()='Popularity']"), By.xpath("//div[@class='XQDdHH']"));
     }
 
+    @Test(priority = 2)
+    public void testCase02()
+    {
+        searchBar(driver, By.xpath("//input[@class='zDPmFV']"),"iPhone",By.xpath("//button[@type='submit']"));
+
+        titleandDiscount(driver,By.xpath("//div[@class='UkUFwK']"),By.xpath("//div[@class='KzDlHZ']"));
+    }
+
+    @Test(priority = 3)
+    public void testCase03()
+    {
+        searchBar(driver, By.xpath("//input[@class='zDPmFV']"),"Coffee mug",By.xpath("//button[@type='submit']"));
+
+        coffeeMug(driver, By.xpath("(//div[@class='XqNaEv'])[1]"));
+    }
     private static void navigateTo(ChromeDriver driver,String url)
     {
         try
@@ -108,6 +102,7 @@ public class TestCases {
 
     private static void searchBar(ChromeDriver driver,By search,String texttosend,By srchbtn)
     {
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
         String productName = "Washing Machine";
         String productName1 = "iPhone";
         String productName2 = "Coffee mug";
@@ -160,12 +155,12 @@ public class TestCases {
             int fourratingcount = 0;
             WebElement popularity = driver.findElement(sort);
             popularity.click();   
-            Thread.sleep(3000);
+            Thread.sleep(1000);
             List<WebElement> rating = driver.findElements(count);
             
             for (WebElement rate : rating) 
             {
-                
+                Thread.sleep(1000);
                 String fourrating = rate.getText();
                 if(fourrating.equals("4.2"))
                 {
@@ -257,3 +252,4 @@ public class TestCases {
         
     }
 }
+
